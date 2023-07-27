@@ -26,15 +26,14 @@ impl Display for Error {
 impl std::error::Error for Error {}
 
 fn try_gurobi_home() -> Result<PathBuf, Error> {
-  let path = env::var("GUROBI_HOME")
-    .map_err(|_| Error::GurobiHomeNotGiven)?;
+  let path = env::var("GUROBI_HOME").map_err(|_| Error::GurobiHomeNotGiven)?;
 
   // You cannot unset environment variables in the config.toml so this is the next best thing.
   if path.is_empty() {
-    return Err(Error::GurobiHomeNotGiven)
+    return Err(Error::GurobiHomeNotGiven);
   }
 
-  let mut path : PathBuf = path.into();
+  let mut path: PathBuf = path.into();
 
   if cfg!(target_os = "windows") {
     path.push("bin");
@@ -49,7 +48,7 @@ fn main() {
   match try_gurobi_home() {
     Ok(path) => println!("cargo:rustc-link-search=native={}", path.display()),
     Err(Error::GurobiHomeNotGiven) => eprintln!("GUROBI_HOME env var not set"),
-    Err(e) => println!("cargo:warning={}", e)
+    Err(e) => println!("cargo:warning={}", e),
   }
   println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);
 }
