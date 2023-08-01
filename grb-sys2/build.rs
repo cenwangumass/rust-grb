@@ -44,7 +44,13 @@ fn get_gurobi_home() -> Result<PathBuf, Error> {
 }
 
 fn get_gurobi_library(gurobi_home: &Path) -> Result<String, Error> {
-  let gurobi_cl = gurobi_home.join("bin").join("gurobi_cl");
+  let cmd = if cfg!(windows) {
+    "gurobi_cl.exe"
+  } else {
+    "gurobi_cl"
+  };
+
+  let gurobi_cl = gurobi_home.join("bin").join(cmd);
 
   if !gurobi_cl.exists() {
     return Err(Error::GurobiClNotFound);
